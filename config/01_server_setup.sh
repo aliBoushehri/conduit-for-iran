@@ -142,8 +142,9 @@ setup_firewall() {
     # Allow SSH (IMPORTANT - don't lock yourself out!)
     ufw allow "$SSH_PORT"/tcp comment 'SSH'
     
-    # NOTE: We do NOT allow broad ports (1024:65535) anymore for security.
-    # Conduit specific ports will be opened in 02_install_conduit.sh
+    # Allow unprivileged ports (1024:65535) for Psiphon Conduit dynamic usage
+    ufw allow 1024:65535/tcp comment 'Conduit Dynamic TCP'
+    ufw allow 1024:65535/udp comment 'Conduit Dynamic UDP'
     
     # Enable UFW
     echo "y" | ufw enable
@@ -397,6 +398,7 @@ show_summary() {
     echo ""
     echo -e "${GREEN}✓${NC} System updated and upgraded"
     echo -e "${GREEN}✓${NC} Firewall (UFW) configured (SSH Port $SSH_PORT)"
+    echo -e "${GREEN}✓${NC} Allowed ports 1024:65535 (Conduit Dynamic)"
     echo -e "${GREEN}✓${NC} Fail2Ban protection enabled"
     echo -e "${GREEN}✓${NC} System security hardened"
     echo -e "${GREEN}✓${NC} Swap file created (4GB)"
