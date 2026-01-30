@@ -98,14 +98,40 @@ check_prerequisites() {
 install_conduit() {
     log_step "STEP 2: Installing Conduit Manager"
     
-    log_info "Launching official Conduit Manager installer..."
-    log_warn "This will start an interactive installation process."
-    log_warn "Please follow the on-screen instructions."
+    echo -e "${CYAN}Select Conduit Manager Version:${NC}"
+    echo -e "  1) ${GREEN}Latest Version${NC} (Official, Multi-container)"
+    echo -e "  2) ${GREEN}Version 1.0.2${NC} (Bypassing Multi-container complexity)"
     echo ""
-    
-    # Run the official installer
-    curl -sL https://raw.githubusercontent.com/SamNet-dev/conduit-manager/main/conduit.sh | sudo bash
-    
+    read -p "Enter your choice [1-2]: " version_choice
+
+    case $version_choice in
+        1)
+            log_info "Launching official Conduit Manager installer (Latest)..."
+            log_warn "This will start an interactive installation process."
+            log_warn "Please follow the on-screen instructions."
+            echo ""
+            
+            # Run the official installer
+            curl -sL https://raw.githubusercontent.com/SamNet-dev/conduit-manager/main/conduit.sh | sudo bash
+            ;;
+        2)
+            log_info "Installing Conduit Manager v1.0.2..."
+            
+            # Check if local script exists
+            if [ -f "conduit.1.0.2.sh" ]; then
+                bash conduit.1.0.2.sh
+            else
+                log_error "File 'conduit.1.0.2.sh' not found in current directory!"
+                log_info "Please ensure the file exists and try again."
+                exit 1
+            fi
+            ;;
+        *)
+            log_error "Invalid choice. Exiting."
+            exit 1
+            ;;
+    esac
+
     if [ $? -eq 0 ]; then
         log_success "Conduit Manager installation finished."
     else
